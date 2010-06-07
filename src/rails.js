@@ -24,7 +24,7 @@ jQuery(function ($) {
         callRemote: function () {
             var el      = this,
                 method  = el.attr('method') || el.attr('data-method') || 'GET',
-                url     = el.attr('action') || el.attr('href'),
+                url     = el.attr('action') || el.attr('data-url') || el.attr('href'),
                 dataType  = el.attr('data-type')  || 'script';
 
             if (url === undefined) {
@@ -32,6 +32,8 @@ jQuery(function ($) {
             } else {
                 if (el.triggerAndReturn('ajax:before')) {
                     var data = el.is('form') ? el.serializeArray() : [];
+						  data = el.is('a[data-remote]') ? $.parseJSON(el.attr('data-remote')) : data;
+
                     $.ajax({
                         url: url,
                         data: data,

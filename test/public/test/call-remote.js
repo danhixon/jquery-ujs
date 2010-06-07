@@ -76,6 +76,7 @@ test('default method GET should be picked up if no method or data-method is supp
   $('form[data-remote]')
     .live('ajax:success', function(e, data, status, xhr) { 
       App.assert_callback_invoked('ajax:success');
+		
       var request_env = $.parseJSON(data)['request_env'];
       App.assert_get_request(request_env); 
 
@@ -129,6 +130,27 @@ test('url should be picked up from href if no action is provided', function() {
 
   App.build_form({
     'href': App.url('show')
+  });
+  stop(App.ajax_timeout);
+
+
+  $('form[data-remote]')
+    .live('ajax:success', function(e, data, status, xhr) { 
+      App.assert_callback_invoked('ajax:success');
+      var request_env = $.parseJSON(data)['request_env'];
+      App.assert_request_path(request_env, '/show');
+
+      start();
+    })
+    .trigger('submit');
+});
+
+test('url should be picked up from data-url when href is provided but no action', function() {
+  expect(2);
+
+  App.build_form({
+    'href': 'http://example.org',
+	 'data-url': App.url('show')
   });
   stop(App.ajax_timeout);
 

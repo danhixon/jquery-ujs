@@ -8,7 +8,15 @@ module('data-remote', {
 			'data-remote': 'true',
 			text: 'my address'
 		}));
-
+		
+		$('#fixtures').append($('<a />', {
+			'class': 'json',
+			href: App.url('update'),
+			'data-remote': '{"color": "red"}',
+			'data-method': 'POST',
+			text: 'my address'
+		}));
+		
 		$('#fixtures').append($('<input />', {
 			href: App.url('show'),
 			'data-remote': 'true',
@@ -40,12 +48,30 @@ test('clicking on a link with data-remote attribute', function() {
   expect(3);
   stop(App.ajax_timeout);
 
-  $('a[data-remote]')
+  $('a[data-remote]:not([data-method])')
     .live('ajax:success', function(e, data, status, xhr) { 
       App.assert_callback_invoked('ajax:success');
       var request_env = $.parseJSON(data)['request_env'];
       App.assert_request_path(request_env, '/show');
       App.assert_get_request(request_env); 
+
+      start();
+    })
+    .trigger('click');
+});
+
+test('clicking on a link with put data-method and json in data-remote attribute', function() {
+  expect(4);
+  stop(App.ajax_timeout);
+  console.log($('a[data-remote].json').attr('href'));
+  $('a[data-remote].json')
+    .live('ajax:success', function(e, data, status, xhr) { 
+      App.assert_callback_invoked('ajax:success');
+      var request_env = $.parseJSON(data)['request_env'];
+		console.log(request_env);
+		App.assert_form_vars(request_env, 'color=red')
+      App.assert_request_path(request_env, '/update');
+      App.assert_post_request(request_env); 
 
       start();
     })
@@ -61,7 +87,6 @@ test('clicking on Submit input tag with data-remote attribute', function() {
       App.assert_callback_invoked('ajax:success');
 
       var request_env = $.parseJSON(data)['request_env'];
-
       App.assert_request_path(request_env, '/show');
       App.assert_get_request(request_env); 
 

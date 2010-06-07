@@ -42,6 +42,13 @@ App.assert_post_request = function(request_env){
   equals(request_env['REQUEST_METHOD'], 'POST', 'request type should be POST');
 };
 
+App.assert_query_string = function(request_env, expected){
+	equals(request_env['QUERY_STRING'], expected, 'expected:' + expected + ' but got: ' + request_env['QUERY_STRING'])
+}
+App.assert_form_vars = function(request_env, expected){
+	equals(request_env['rack.request.form_vars'], expected, 'expected:' + expected + ' but got: ' + request_env['rack.request.form_vars'])
+}
+
 App.assert_request_path = function(request_env, path) {
   equals(request_env['REQUEST_PATH'], path, 'request should be sent to right url');
 };
